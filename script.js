@@ -262,7 +262,7 @@
         html += `
         <div class="border flex flex-col p-2 ${
           month.title == monthsGlobal[new Date().getMonth()] &&
-          day == new Date().getDay()
+          day == new Date().getDate()
             ? `border border-green-500`
             : ``
         }">
