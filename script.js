@@ -4,6 +4,7 @@
   let totalDatesAdded = 0;
   let totalActiveDatesAdded = 0;
   let dayIndex = 0;
+  let reCountStarted = false;
   function months(year) {
     const months = [
       {
@@ -222,6 +223,8 @@
         }
       }
 
+      let banMonth = getOrMonth(theMonth, _i).altBan;
+
       for (let i = 0; i < month.totalDays; i++) {
         const day = i + 1;
         totalActiveDatesAdded++;
@@ -229,11 +232,19 @@
 
         dayIndex = totalDatesAdded % 7;
 
-        let diffShould =
-          getOrMonth(theMonth, _i).altBanTotalDays > 30 ? 14 : 13;
+        let prevMonthTotalDays = getOrMonth(theMonth, _i).altBanTotalDays;
 
-        let forBnMonth =
-          day - diffShould > 0 ? month.altBan : getOrMonth(theMonth, _i).altBan;
+        let forBnMonth = (() => {
+          if (_i > 3) {
+            return reCountStarted
+              ? (banMonth = month.altBan && month.altBan)
+              : banMonth;
+          } else {
+            return day - 13 > 0
+              ? month.altBan
+              : getOrMonth(theMonth, _i).altBan;
+          }
+        })();
 
         let insideHtmls = ``;
         let forBnDateRef = null;
@@ -281,8 +292,10 @@
           forBnDate: forBnDateRef,
         });
 
-        if (countAgain + 1 > month.altBanTotalDays) {
+        reCountStarted = false;
+        if (countAgain + 1 > prevMonthTotalDays) {
           countAgain = 0;
+          reCountStarted = true;
         }
       }
 
@@ -386,6 +399,7 @@
       .sort((a, b) => a.i - b.i);
 
     calenderDB = [...thisYearsFirstPart, ...thisYearsLastPart];
+    //calenderDB = database;
 
     if (select.one("[data-show-eng-months]")) {
       calenderDB.forEach((obj) => {
@@ -397,11 +411,6 @@
     let currentMonthHtml = calenderDB.filter(
       (obj) => obj.title == monthsGlobal[new Date().getMonth()]
     )[0].html;
-    console.log(
-      calenderDB.filter(
-        (obj) => obj.title == monthsGlobal[new Date().getMonth()]
-      )[0]
-    );
 
     if (select.one("[data-current-eng-month]")) {
       select.one("[data-current-eng-month]").innerHTML = currentMonthHtml;
