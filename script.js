@@ -229,8 +229,11 @@
 
         dayIndex = totalDatesAdded % 7;
 
+        let diffShould =
+          getOrMonth(theMonth, _i).altBanTotalDays > 30 ? 14 : 13;
+
         let forBnMonth =
-          day - 13 > 0 ? month.altBan : getOrMonth(theMonth, _i).altBan;
+          day - diffShould > 0 ? month.altBan : getOrMonth(theMonth, _i).altBan;
 
         let insideHtmls = ``;
         let forBnDateRef = null;
